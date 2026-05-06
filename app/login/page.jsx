@@ -9,15 +9,31 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log({ email, password });
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // demo login
-    localStorage.setItem("isLoggedIn", "true");
+      const data = await response.json();
 
-    router.push("/dashboard");
+      if (response.ok) {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
+        router.replace("/dashboard");
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("An error occurred during login");
+    }
   };
 
   return (
@@ -53,6 +69,12 @@ export default function LoginPage() {
             Login
           </button>
         </form>
+
+
+
+
+
+
 
         {/* 👇 Navigation link */}
         <p className="text-sm text-center mt-4">

@@ -10,16 +10,30 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
 
-    const user = { name, email, password };
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    console.log(user);
+      const data = await response.json();
 
-    localStorage.setItem("user", JSON.stringify(user));
-
-    router.push("/login");
+      if (response.ok) {
+        alert("Signup successful! Please login.");
+        router.replace("/login");
+      } else {
+        alert(data.message || "Signup failed");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("An error occurred during signup");
+    }
   };
 
   return (
@@ -56,7 +70,7 @@ export default function SignupPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-         <button
+          <button
             type="submit"
             className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
           >
@@ -69,7 +83,7 @@ export default function SignupPage() {
           Already have an account?{" "}
           <span
             className="text-blue-600 cursor-pointer"
-            onClick={() => router.push("/login")}
+            onClick={() => router.replace("/login")}
           >
             Login
           </span>
