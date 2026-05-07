@@ -23,11 +23,13 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(data.user));
-        router.replace("/dashboard");
-      } else {
+    if (response.ok) {
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.user));
+
+  router.replace("/dashboard");
+} else {
         alert(data.message || "Login failed");
       }
     } catch (error) {
@@ -51,6 +53,7 @@ export default function LoginPage() {
             placeholder="Email"
             className="w-full p-3 border rounded"
             value={email}
+             required
             onChange={(e) => setEmail(e.target.value)}
           />
 
@@ -59,6 +62,7 @@ export default function LoginPage() {
             placeholder="Password"
             className="w-full p-3 border rounded"
             value={password}
+             required
             onChange={(e) => setPassword(e.target.value)}
           />
 
