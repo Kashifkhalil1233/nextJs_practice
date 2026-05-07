@@ -1,68 +1,36 @@
-import pool from "@/lib/db";
+import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const { email, password } = await req.json();
 
-    const { email, password } = body;
+    const user = await User.findOne({ where: { email } });
 
-    // Check user
-    const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1",
-      [email]
-    );
-
-    if (result.rows.length === 0) {
-      return NextResponse.json(
-        { message: "Invalid email or password" },
-        { status: 400 }
-      );
+    if (!user) {
+      return NextResponse.json({ message: "Invalid user" }, { status: 400 });
     }
 
-    const user = result.rows[0];
+    const match = await bcrypt.compare(password, user.password);
 
-    // Compare password
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
-
-    if (!isMatch) {
-      return NextResponse.json(
-        { message: "Invalid email or password" },
-        { status: 400 }
-      );
+    if (!match) {
+      return NextResponse.json({ message: "Wrong password" }, { status: 400 });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
+      { id: user.id, email: user.email },
+      "secretkey",
+      { expiresIn: "7d" }
     );
 
     return NextResponse.json({
-      message: "Login successful",
+      message: "Login success",
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      user,
     });
-
-  } catch (error) {
-    return NextResponse.json(
-      { message: error.message },
-      { status: 500 }
-    );
+  } catch (err) {
+    return NextResponse.json({ error: err.message });
   }
 }
