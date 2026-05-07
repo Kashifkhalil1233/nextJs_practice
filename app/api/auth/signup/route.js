@@ -1,4 +1,5 @@
-import User from "@/models/User";
+import db from "@/models";
+const { User } = db;
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 

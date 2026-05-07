@@ -6,18 +6,21 @@ import { useRouter } from "next/navigation";
 export default function DashboardPage() {
   const router = useRouter();
 
-  const [user, setUser] = useState(null);
+  const [user] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+  });
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
-    const storedUser = localStorage.getItem("user");
 
     if (!isLoggedIn) {
       router.push("/login");
-    } else {
-      setUser(JSON.parse(storedUser));
     }
-  }, []);
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");

@@ -1,40 +1,33 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize';
+
+const CompanyFactory = (sequelize, DataTypes) => {
   class Company extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
+    static associate() {
       // define association here
     }
   }
- Company.init({
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true,
+  Company.init({
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-  },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    location: {
+      type: DataTypes.STRING,
+    }
+  }, {
+    sequelize,
+    modelName: 'Company',
+  });
 
-  location: {
-    type: DataTypes.STRING,
-  }
-
-}, {
-  sequelize,
-  modelName: 'Company',
-});
   return Company;
 };
+
+export default CompanyFactory;
