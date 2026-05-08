@@ -6,7 +6,19 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const { name, email, password } = await req.json();
+if (!name || !email || !password) {
+  const message =
+    !name
+      ? "Name is required"
+      : !email
+      ? "Email is required"
+      : "Password is required";
 
+  return NextResponse.json(
+    { message },
+    { status: 400 }
+  );
+}
     const userExists = await User.findOne({ where: { email } });
 
     if (userExists) {
@@ -19,6 +31,7 @@ export async function POST(req) {
       name,
       email,
       password: hashed,
+      role: 'user', 
     });
 
     return NextResponse.json({

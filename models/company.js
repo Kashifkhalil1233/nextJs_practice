@@ -2,8 +2,12 @@ import { Model } from 'sequelize';
 
 const CompanyFactory = (sequelize, DataTypes) => {
   class Company extends Model {
-    static associate() {
-      // define association here
+    static associate(models) {
+      Company.belongsToMany(models.User, {
+        through: 'UserCompanies',
+        foreignKey: 'companyId',
+        otherKey: 'userId'
+      });
     }
   }
   Company.init({

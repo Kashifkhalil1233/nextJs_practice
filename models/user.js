@@ -2,8 +2,12 @@ import { Model } from 'sequelize';
 
 const UserFactory = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate() {
-      // define association here
+    static associate(models) {
+      User.belongsToMany(models.Company, {
+        through: 'UserCompanies',
+        foreignKey: 'userId',
+        otherKey: 'companyId'
+      });
     }
   }
   User.init({
@@ -21,6 +25,11 @@ const UserFactory = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM('user', 'admin'),
+      allowNull: false,
+      defaultValue: 'user',
     }
   }, {
     sequelize,
