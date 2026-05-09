@@ -28,7 +28,10 @@ export default function LoginPage() {
   localStorage.setItem("token", data.token);
   localStorage.setItem("user", JSON.stringify(data.user));
 
-  router.replace("/dashboard");
+ data.user.role==="admin" ? router.replace("/dashboard") :router.replace("/")
+
+
+  // router.replace("/dashboard");
 } else {
         alert(data.message || "Login failed");
       }

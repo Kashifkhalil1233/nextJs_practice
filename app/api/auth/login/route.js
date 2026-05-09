@@ -15,7 +15,13 @@ export async function POST(req) {
       
       },{status:400})
     }
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ 
+      where: { email },
+      include: [{ 
+        model: db.Company,
+        through: { attributes: [] } 
+      }]
+    });
 
     if (!user) {
       return NextResponse.json({ message: "Invalid credentials" }, { status: 400 });
@@ -28,7 +34,7 @@ export async function POST(req) {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email   },
       "secretkey",
       { expiresIn: "7d" }
     );
