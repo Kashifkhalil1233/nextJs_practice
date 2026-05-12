@@ -23,13 +23,6 @@ export default function CreateCompanyPage() {
   const [message, setMessage] = useState({ type: "", text: "" });
 
   useEffect(() => {
-    // Check auth
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (!isLoggedIn) {
-      router.push("/login");
-      return;
-    }
-
     // Fetch users
     const fetchUsers = async () => {
       try {

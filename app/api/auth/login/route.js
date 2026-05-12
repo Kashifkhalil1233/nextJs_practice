@@ -1,7 +1,7 @@
 import db from "@/models";
 const { User } = db;
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { signToken } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -10,10 +10,8 @@ export async function POST(req) {
   
     if(!email || !password){
       return NextResponse.json({
-    
-          message: !email ? "email is equired" :"password is required"
-      
-      },{status:400})
+          message: !email ? "email is required" : "password is required"
+      }, { status: 400 })
     }
     const user = await User.findOne({ 
       where: { email },
@@ -33,18 +31,28 @@ export async function POST(req) {
       return NextResponse.json({ message: "Invalid credentials" }, { status: 400 });
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email   },
-      "secretkey",
-      { expiresIn: "7d" }
-    );
+    const token = signToken({ id: user.id, email: user.email, role: user.role });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: "Login success",
-      token,
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
     });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    });
+
+    return response;
   } catch (err) {
-    return NextResponse.json({ error: err.message });
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

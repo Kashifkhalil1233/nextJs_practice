@@ -23,16 +23,11 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-    if (response.ok) {
-  localStorage.setItem("isLoggedIn", "true");
-  localStorage.setItem("token", data.token);
-  localStorage.setItem("user", JSON.stringify(data.user));
-
- data.user.role==="admin" ? router.replace("/dashboard") :router.replace("/")
-
-
-  // router.replace("/dashboard");
-} else {
+      if (response.ok) {
+        data.user.role === "admin"
+          ? router.replace("/dashboard")
+          : router.replace("/");
+      } else {
         alert(data.message || "Login failed");
       }
     } catch (error) {
@@ -44,20 +39,16 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md">
-
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Login
-        </h1>
+        <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
 
         <form onSubmit={handleLogin} className="space-y-4">
-
           <input
             type="email"
             placeholder="Email"
             className="w-full p-3 border rounded"
             value={email}
-             required
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <input
@@ -65,7 +56,7 @@ export default function LoginPage() {
             placeholder="Password"
             className="w-full p-3 border rounded"
             value={password}
-             required
+            required
             onChange={(e) => setPassword(e.target.value)}
           />
 
@@ -77,13 +68,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-
-
-
-
-
-
-        {/* 👇 Navigation link */}
+        {/* Navigation link */}
         <p className="text-sm text-center mt-4">
           Don’t have an account?{" "}
           <span
@@ -93,7 +78,6 @@ export default function LoginPage() {
             Create account
           </span>
         </p>
-
       </div>
     </div>
   );

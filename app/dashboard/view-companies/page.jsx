@@ -10,12 +10,6 @@ export default function ViewCompaniesPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (!isLoggedIn) {
-      router.push("/login");
-      return;
-    }
-
     const fetchCompanies = async () => {
       try {
         const res = await fetch("/api/company");
