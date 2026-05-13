@@ -18,7 +18,7 @@ export async function GET() {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
 
-    // Optionally fetch full user from DB if needed, but for now return decoded info
+    
     const user = await db.User.findByPk(decoded.id, {
       attributes: ['id', 'name', 'email', 'role']
     });
