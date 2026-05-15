@@ -13,18 +13,18 @@ export async function POST(req) {
       return NextResponse.json({ message: "Email is required" }, { status: 400 });
     }
 
-    console.log(`[DEBUG] Attempting to send OTP for: ${email}`);
+    // console.log(`[DEBUG] Attempting to send OTP for: ${email}`);
 
-    // Generate 6-digit OTP
+   
     const otp = crypto.randomInt(100000, 999999).toString();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
     const user = await User.findOne({ where: { email } });
 
-    // SECURITY: If user doesn't exist, we still return success to prevent user discovery
+  
     if (user) {
       console.log(`[DEBUG] User found. Generating OTP...`);
-      // Basic rate limiting/cooldown: Check if OTP was sent in the last 60 seconds
+   
       if (user.otpExpiry && (user.otpExpiry.getTime() - Date.now() > 4 * 60 * 1000)) {
         return NextResponse.json({ 
           message: "Please wait a moment before requesting another OTP." 
@@ -36,11 +36,11 @@ export async function POST(req) {
         otpExpiry
       });
 
-      // Send Email
+     
       await sendOTPEmail(email, otp);
     } else {
        console.log(`[DEBUG] User NOT found in database: ${email}`);
-       // Mock delay to prevent timing attacks
+      
        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
