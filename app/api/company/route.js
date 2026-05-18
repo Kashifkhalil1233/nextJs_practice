@@ -20,9 +20,10 @@ export async function GET() {
       ],
       order: [["createdAt", "DESC"]],
     });
+    console.log("compnay detail:", JSON.stringify(companies));
     return NextResponse.json(companies);
   } catch (error) {
-    console.error("Error fetching companies:", error);
+    // console.error("Error fetching companies:", error);
     return NextResponse.json(
       { error: "Failed to fetch companies" },
       { status: 500 },
@@ -47,9 +48,9 @@ export async function POST(request) {
     }
     const { name, email, location, users } = await request.json();
 
-    if (!name || !email) {
+    if (!name || !email || !location) {
       return NextResponse.json(
-        { error: "Name and email are required" },
+        { error: "Name , email and location are required" },
         { status: 400 },
       );
     }
